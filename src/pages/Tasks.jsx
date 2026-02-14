@@ -25,8 +25,9 @@ const Tasks = () => {
     try {
       const res = await taskAPI.getAll(page, ITEMS_PER_PAGE);
       const data = res.data;
-      setTasks(data.tasks || data.data || []);
-      setTotalPages(data.totalPages || Math.ceil((data.total || 0) / ITEMS_PER_PAGE) || 1);
+      const taskList = Array.isArray(data) ? data : (data.tasks || data.data || []);
+      setTasks(taskList);
+      setTotalPages(data.totalPages || Math.ceil((data.total || taskList.length) / ITEMS_PER_PAGE) || 1);
     } catch {
       toast.error('Failed to load tasks');
     } finally {
