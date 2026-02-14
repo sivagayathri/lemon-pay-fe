@@ -87,52 +87,47 @@ const Tasks = () => {
     navigate('/login');
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-AU', {
-      day: 'numeric',
-      month: '2-digit',
-      year: 'numeric',
-    }) + ' ' + d.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }).toLowerCase();
+  const statusBadge = (status) => {
+    const styles = {
+      'pending': 'bg-yellow-100 text-yellow-700',
+      'in-progress': 'bg-blue-100 text-blue-700',
+      'completed': 'bg-green-100 text-green-700',
+    };
+    return (
+      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[status] || styles['pending']}`}>
+        {status || 'pending'}
+      </span>
+    );
   };
 
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="min-h-screen bg-bg-dark flex flex-col">
-      {/* Top bar */}
-      <div className="px-6 py-4 flex justify-between items-center">
-        <span className="text-gray-400 text-sm font-medium hidden md:block">Desktop version</span>
-        <span className="text-gray-400 text-sm font-medium md:hidden">Mobile version</span>
-        <button
-          onClick={handleLogout}
-          className="text-gray-400 text-sm hover:text-white transition cursor-pointer"
-        >
-          Logout
-        </button>
-      </div>
-
+    <div className="h-screen bg-bg-dark flex flex-col overflow-hidden">
       {/* Main card */}
-      <div className="flex-1 flex items-start justify-center px-4 pb-8 md:px-8">
-        <div className="w-full max-w-[1200px] bg-bg-card rounded-2xl shadow-2xl p-6 md:p-10">
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-full bg-bg-card p-6 md:p-10 overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl md:text-3xl font-bold">
               <span className="text-primary">Tasks</span>{' '}
               <span className="text-primary-light">Management</span>
             </h1>
-            <button
-              onClick={handleAdd}
-              className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-light transition cursor-pointer"
-            >
-              <FiPlus className="text-lg" />
-              Add Task
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleAdd}
+                className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-light transition cursor-pointer"
+              >
+                <FiPlus className="text-lg" />
+                Add Task
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2.5 rounded-full text-sm font-medium text-gray-500 border border-gray-300 hover:bg-gray-100 transition cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
           {loading ? (
@@ -151,9 +146,9 @@ const Tasks = () => {
                   <thead>
                     <tr className="text-left text-primary text-sm border-b border-gray-200">
                       <th className="pb-3 pl-4 w-16">No</th>
-                      <th className="pb-3 w-44">Date & Time</th>
-                      <th className="pb-3 w-48">Task</th>
+                      <th className="pb-3 w-48">Title</th>
                       <th className="pb-3">Description</th>
+                      <th className="pb-3 w-36">Status</th>
                       <th className="pb-3 pr-4 text-right w-20">Action</th>
                     </tr>
                   </thead>
@@ -161,9 +156,9 @@ const Tasks = () => {
                     {tasks.map((task, idx) => (
                       <tr key={task._id} className="border-b border-gray-100 hover:bg-gray-50 transition">
                         <td className="py-5 pl-4 text-gray-600">{(page - 1) * ITEMS_PER_PAGE + idx + 1}</td>
-                        <td className="py-5 text-gray-600 text-sm">{formatDate(task.dueDate)}</td>
-                        <td className="py-5 text-gray-800 font-medium">{task.taskName}</td>
+                        <td className="py-5 text-gray-800 font-medium">{task.title}</td>
                         <td className="py-5 text-gray-500 text-sm truncate max-w-xs">{task.description}</td>
+                        <td className="py-5">{statusBadge(task.status)}</td>
                         <td className="py-5 pr-4 text-right relative">
                           <button
                             onClick={() => setOpenMenu(openMenu === task._id ? null : task._id)}
@@ -200,9 +195,9 @@ const Tasks = () => {
                   <div key={task._id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm relative">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 pr-4">
-                        <h3 className="font-semibold text-gray-800">{task.taskName}</h3>
+                        <h3 className="font-semibold text-gray-800">{task.title}</h3>
                         <p className="text-gray-500 text-sm mt-1 line-clamp-2">{task.description}</p>
-                        <p className="text-gray-400 text-xs mt-2">{formatDate(task.dueDate)}</p>
+                        <div className="mt-2">{statusBadge(task.status)}</div>
                       </div>
                       <button
                         onClick={() => setOpenMenu(openMenu === task._id ? null : task._id)}

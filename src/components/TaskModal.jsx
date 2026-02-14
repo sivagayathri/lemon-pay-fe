@@ -3,17 +3,16 @@ import { FiX } from 'react-icons/fi';
 
 const TaskModal = ({ task, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    taskName: task?.taskName || '',
+    title: task?.title || '',
     description: task?.description || '',
-    dueDate: task?.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : '',
+    status: task?.status || 'pending',
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.taskName.trim()) newErrors.taskName = 'Task name is required';
-    if (!formData.dueDate) newErrors.dueDate = 'Due date is required';
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -23,9 +22,9 @@ const TaskModal = ({ task, onClose, onSave }) => {
     if (!validate()) return;
     setSubmitting(true);
     await onSave({
-      taskName: formData.taskName.trim(),
+      title: formData.title.trim(),
       description: formData.description.trim(),
-      dueDate: new Date(formData.dueDate).toISOString(),
+      status: formData.status,
     });
     setSubmitting(false);
   };
@@ -44,15 +43,15 @@ const TaskModal = ({ task, onClose, onSave }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Task Name *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Title *</label>
             <input
               type="text"
-              placeholder="Enter task name"
-              value={formData.taskName}
-              onChange={(e) => setFormData({ ...formData, taskName: e.target.value })}
+              placeholder="Enter task title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
-            {errors.taskName && <p className="text-red-500 text-xs mt-1">{errors.taskName}</p>}
+            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
           </div>
 
           <div className="mb-4">
@@ -67,14 +66,16 @@ const TaskModal = ({ task, onClose, onSave }) => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Due Date *</label>
-            <input
-              type="datetime-local"
-              value={formData.dueDate}
-              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-            />
-            {errors.dueDate && <p className="text-red-500 text-xs mt-1">{errors.dueDate}</p>}
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition bg-white"
+            >
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
           </div>
 
           <div className="flex gap-3">
