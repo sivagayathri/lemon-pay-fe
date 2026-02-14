@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (email, password) => {
-    const res = await authAPI.signup({ email, password, captcha: '1234' });
+    const res = await authAPI.signup({ email, password });
     return res;
   };
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.API_URL 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://lemon-pay-be.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -38,7 +38,7 @@ api.interceptors.response.use(
 // Auth APIs
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
-  signup: (data) => api.post('/auth/signup', data),
+  signup: (data) => api.post('/auth/register', data),
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
